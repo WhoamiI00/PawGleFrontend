@@ -224,18 +224,20 @@ const PawGle = () => {
               {petsCount ? petsCount : "0"} NEW PETS REGISTERED THIS WEEK!
             </p>
           </div>
-          <h1 className="text-6xl font-bold text-[var(--primaryColor)] mb-4">
-            Effortless Identification
-          </h1>
-          <h1 className="text-6xl font-bold text-[var(--primaryColor)] mb-6">
-            of Your Pets
-          </h1>
-          <p className="text-[var(--primary2)] text-lg max-w-2xl mx-auto font-cursive mb-6">
-            Say goodbye to the hassle of recognizing your furry friends!
-          </p>
+          <div className="flex flex-col items-center">
+            <h1 className="text-6xl font-bold text-[var(--primaryColor)] mb-4 w-fit bg-[var(--fun)] px-4 py-2 rounded-full backdrop-blur-3xl">
+              Effortless Identification
+            </h1>
+            <h1 className="text-6xl font-bold text-[var(--primaryColor)] mb-6 w-fit bg-[var(--fun)] px-4 py-2 rounded-full backdrop-blur-3xl">
+              of Your Pets
+            </h1>
+            <p className="text-[var(--primary2)] text-lg max-w-2xl mx-auto font-cursive mb-6 w-fit bg-[var(--fun)] px-4 py-2 rounded-full">
+              Say goodbye to the hassle of recognizing your furry friends!
+            </p>
+          </div>
         </motion.div>
       </main>
-      <div className="flex z-1 py-20 px-6 pt-28 items-center justify-center flex-wrap gap-10 relative z-10">
+      <div className="flex z-1 py-20 px-6 pt-20 items-center justify-center flex-wrap gap-10 relative z-10">
         <StatCard
           icon={
             <FaUsers className="w-10 h-10 mb-4 text-[var(--primaryColor)]" />

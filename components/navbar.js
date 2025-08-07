@@ -121,7 +121,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="flex justify-between fixed w-[99%] rounded-3xl testt backdrop-blur-md items-center px-6 py-3 m-2 shadow-lg z-[100] bg-[var(--backgroundColor)/80] border border-[var(--secondaryColor2)]">
+      <header className="flex justify-between fixed w-[99%] rounded-3xl testt backdrop-blur-md items-center px-6 py-3 m-2 shadow-lg z-[20] bg-[var(--backgroundColor)/80] border border-[var(--secondaryColor2)]">
         <div className="text-3xl md:text-4xl font-bold text-[var(--secondaryColor)]">
           <Link href="/">
             Paw<span className="text-[var(--primaryColor)]">Gle</span>
