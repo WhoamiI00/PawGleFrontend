@@ -561,7 +561,7 @@ export default function PetMapPage() {
                           <div className="w-20 h-20 flex-shrink-0">
                             <Image
                               src={pet.image_url}
-                              alt={pet.animal_name}
+                              alt={pet.animal_name?pet.animal_name:'Animal'}
                               className="w-full h-full object-cover rounded-lg"
                               height={100}
                               width={100}
