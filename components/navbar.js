@@ -123,13 +123,13 @@ export default function Navbar() {
         </div>
 
         {/* Search Bar */}
-        <div className="hidden md:flex items-center flex-grow max-w-xs space-x-3 mr-[100px]">
+        {/* <div className="hidden md:flex items-center flex-grow max-w-xs space-x-3 mr-[100px]">
           <input
             type="text"
             placeholder="Search..."
             className="w-full px-4 py-2 rounded-md bg-white text-[var(--secondaryColor)] focus:outline-none focus:ring-1 focus:ring-[var(--secondaryColor)] shadow-lg"
           />
-        </div>
+        </div> */}
 
         {/* Profile & Theme Section */}
         <div className="flex items-center space-x-4">

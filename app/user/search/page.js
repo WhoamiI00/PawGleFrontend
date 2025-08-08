@@ -69,6 +69,29 @@ export default function SearchPetForm() {
     }
   };
 
+  // Helper function to filter unique pets by pet.id, preferring those with pet_location
+  function getUniqueMatches(matches) {
+    const petMap = new Map();
+    for (const match of matches) {
+      const id = match.pet?.id;
+      if (!id) {
+        // If no id, just push as is (could be improved if needed)
+        petMap.set(Symbol(), match);
+        continue;
+      }
+      if (!petMap.has(id)) {
+        petMap.set(id, match);
+      } else {
+        // Prefer match with pet_location
+        const existing = petMap.get(id);
+        if (!existing.pet_location && match.pet_location) {
+          petMap.set(id, match);
+        }
+      }
+    }
+    return Array.from(petMap.values());
+  }
+
   return (
     <>
       <CirclesBackground height={backgroundHeight} />
@@ -126,11 +149,11 @@ export default function SearchPetForm() {
               </form>
 
               {/* Display search results */}
-              {matches.length > 0
-                ? matches.map((match, index) => (
+              {getUniqueMatches(matches).length > 0
+                ? getUniqueMatches(matches).map((match, index) => (
 
                   <div
-                    key={index}
+                    key={match.pet.id ? `pet-${match.pet.id}` : `idx-${index}`}
                     className="p-4 bg-[var(--backgroundColor)] rounded-lg shadow-md mt-4 flex justify-between items-center"
                   >
                     <div className="details">
@@ -151,38 +174,39 @@ export default function SearchPetForm() {
                           Status: {match.pet_location.status}
                         </p>
                       )}
+                      {console.log(match)}
                     </div>
-                    <div className="images">
-                      {match.pet.images?.length > 0 && (
-                        <div className="mt-2 relative">
-                          <Image
-                            width={100}
-                            height={100}
-                            src={`${BACKEND_API_PORT}/media/${match.pet.images[0]}`}
-                            alt={`Pet image`}
-                            className="w-24 h-24 object-cover rounded-lg"
-                            />
-                        </div>
-                      )}
-                          {match.pet_location && (
-                            <Link
-                            href="/pet/map"
-                            className="ml-auto py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] hover:text-[var(--textColor)]"
-                            onClick={localStorage.setItem("selected",JSON.stringify(match.pet_location))}
-                          >
-                            Report Pet
-                          </Link>
-                          )}
+                    <div className="images flex flex-col items-center gap-2">
+                      {/* Show only one image: pet image if available, else pet_location image */}
+                      {match.pet.images?.length > 0 ? (
+                        <Image
+                          width={100}
+                          height={100}
+                          src={`${BACKEND_API_PORT}/media/${match.pet.images[0]}`}
+                          alt={`Pet image`}
+                          className="w-24 h-24 object-cover rounded-lg"
+                        />
+                      ) : match.pet_location?.image_url ? (
+                        <Image
+                          width={100}
+                          height={100}
+                          src={match.pet_location.image_url}
+                          alt={`Pet image`}
+                          className="w-24 h-24 object-cover rounded-lg"
+                        />
+                      ) : null}
+
                       {match.pet_location && (
-                        <div className="mt-2 relative">
-                          <Image
-                            width={100}
-                            height={100}
-                            src={match.pet_location.image_url}
-                            alt={`Pet image`}
-                            className="w-24 h-24 object-cover rounded-lg"
-                            />
-                        </div>
+                        <Link
+                          href="/pet/map"
+                          className="mt-2 w-full text-center py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] hover:text-[var(--textColor)] font-bold"
+                          style={{ minWidth: "100px" }}
+                          onClick={() =>
+                            localStorage.setItem("selected", JSON.stringify(match.pet_location))
+                          }
+                        >
+                          Report Pet
+                        </Link>
                       )}
                     </div>
                   </div>

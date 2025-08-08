@@ -13,7 +13,7 @@ export default function PetMapPage() {
   const [error, setError] = useState(null);
   const [view, setView] = useState("all");
   const [windowWidth, setWindowWidth] = useState(0);
-  const [mapCenter, setMapCenter] = useState([0, 0]);
+  const [mapCenter, setMapCenter] = useState([28.6139, 77.2090]); // Default to Delhi, India (or your preferred location)
   const [mapZoom, setMapZoom] = useState(5);
   const [locationPermission, setLocationPermission] = useState("prompt");
   const [locationError, setLocationError] = useState(null);
@@ -103,7 +103,9 @@ export default function PetMapPage() {
 
         // Calculate center based on markers if available
         if (data.length > 0) {
-          const validLocations = data.filter(p => p.latitude && p.longitude);
+          const validLocations = data.filter(
+            p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude))
+          );
           if (validLocations.length > 0) {
             const avgLat = validLocations.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validLocations.length;
             const avgLon = validLocations.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validLocations.length;
@@ -137,7 +139,13 @@ export default function PetMapPage() {
   const MapCenterer = ({ center, zoom }) => {
     const map = useMap();
     useEffect(() => {
-      if (center) {
+      if (
+        center &&
+        Array.isArray(center) &&
+        center.length === 2 &&
+        !isNaN(center[0]) &&
+        !isNaN(center[1])
+      ) {
         map.setView(center, zoom);
       }
     }, [center, zoom, map]);
@@ -617,7 +625,7 @@ export default function PetMapPage() {
                   <div className="mb-4">
                     <Image
                       src={selectedPet.image_url}
-                      alt={selectedPet.animal_name}
+                      alt={selectedPet.animal_name?selectedPet.animal_name:'Animal'}
                       className="w-full h-auto rounded-lg object-cover"
                       height={100}
                       width={100}

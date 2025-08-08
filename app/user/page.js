@@ -125,7 +125,7 @@ const User = () => {
                   {owner?.username || "Loading..."}
                 </h1>
                 <p>{owner?.email || ""}</p>
-                <p className="mt-1">Some bio about the pet owner goes here.</p>
+                {/* <p className="mt-1">Some bio about the pet owner goes here.</p> */}
               </div>
             </div>
             <Link

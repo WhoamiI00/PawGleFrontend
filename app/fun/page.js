@@ -1348,13 +1348,13 @@ export default function PetMediaEditor() {
                   <Move size={16} />
                   Selection
                 </button>
-                <button
+                {/* <button
                   onClick={() => setIsPanning((prev) => !prev)}
                   className={`py-2 px-4 rounded-lg transition duration-200 flex items-center gap-1 ${isPanning ? "bg-[var(--primaryColor)] text-[var(--textColor3)]" : "bg-[var(--background2)] text-[var(--textColor)]"} hover:bg-[var(--primaryColor)] hover:text-[var(--textColor3)]`}
                 >
                   <Hand size={16} />
                   {isPanning ? "Hand Tool (On)" : "Hand Tool"}
-                </button>
+                </button> */}
                 <button
                   onClick={() => setSelectedTool("shapes")}
                   className={`py-2 px-4 rounded-lg transition duration-200 flex items-center gap-1 ${selectedTool === "shapes" ? "bg-[var(--primaryColor)] text-[var(--textColor3)]" : "bg-[var(--background2)] text-[var(--textColor)]"} hover:bg-[var(--primaryColor)] hover:text-[var(--textColor3)]`}
@@ -1376,13 +1376,13 @@ export default function PetMediaEditor() {
                   <Palette size={16} />
                   Overlays
                 </button>
-                <button
+                {/* <button
                   onClick={() => setSelectedTool("filters")}
                   className={`py-2 px-4 rounded-lg transition duration-200 flex items-center gap-1 ${selectedTool === "filters" ? "bg-[var(--primaryColor)] text-[var(--textColor3)]" : "bg-[var(--background2)] text-[var(--textColor)]"} hover:bg-[var(--primaryColor)] hover:text-[var(--textColor3)]`}
                 >
                   <ImageIcon size={16} />
                   Filters
-                </button>
+                </button> */}
                 <button
                   onClick={() => setShowLayersPanel(!showLayersPanel)}
                   className={`py-2 px-4 rounded-lg transition duration-200 flex items-center gap-1 ${showLayersPanel ? "bg-[var(--primaryColor)] text-[var(--textColor3)]" : "bg-[var(--background2)] text-[var(--textColor)]"} hover:bg-[var(--primaryColor)] hover:text-[var(--textColor3)]`}
@@ -1611,7 +1611,7 @@ export default function PetMediaEditor() {
                             )}
                             <span className="text-sm truncate max-w-[120px]">{layer.name}</span>
                           </div>
-                          <div className="flex gap-1">
+                          {/* <div className="flex gap-1">
                             <button
                               onClick={() => moveLayerUp(layer.object)}
                               className="p-1 rounded hover:bg-[var(--primaryColor)] hover:bg-opacity-30"
@@ -1626,13 +1626,13 @@ export default function PetMediaEditor() {
                             >
                               <ChevronDown size={14} />
                             </button>
-                          </div>
+                          </div> */}
                         </li>
                       ))}
                     </ul>
                   )}
                 </div>
-                <div className="flex justify-between mt-2">
+                {/* <div className="flex justify-between mt-2">
                   <button
                     onClick={() => selectedObject && bringLayerToFront(selectedObject)}
                     disabled={!selectedObject}
@@ -1649,7 +1649,7 @@ export default function PetMediaEditor() {
                     <ArrowDown size={12} />
                     Send to Back
                   </button>
-                </div>
+                </div> */}
               </div>
             )}
             <div className="mb-6">

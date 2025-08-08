@@ -142,9 +142,9 @@ const PawGle = () => {
               <FaSun className="text-[var(--textColor)]" size={20} />
             )}
           </button>
-          <button className="bg-[var(--primary1)] hover:bg-[var(--primary2)] text py-2 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-105">
+          {/* <button className="bg-[var(--primary1)] hover:bg-[var(--primary2)] text py-2 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-105">
             <RiCustomerService2Fill className="text-2xl" />
-          </button>
+          </button> */}
           {!userInfoExists ? (
             <button className="border border-white hover:border[var(--primary2)] hover:text-[var(--primaryColor)] text py-2 px-4 rounded-lg transition duration-200 transform hover:scale-105">
               <Link
