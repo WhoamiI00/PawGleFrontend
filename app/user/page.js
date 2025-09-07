@@ -31,6 +31,8 @@ const User = () => {
         }
 
         const data = await response.json();
+        console.log(data);
+        console.log(data.user)
         setOwner(data.user);
         setPets(data.pets);
       } catch (err) {
@@ -144,12 +146,12 @@ const User = () => {
               <h2 className="text-2xl font-semibold mb-4">Pets Registered</h2>
               {pets.length > 0 ? (
                 <ul className="space-y-4">
-                  {pets.map((pet) => (<div key={pet.id}>
-                    {pet.features.length > 0 ? (<li
+                  {pets.map((pet) => (
+                    <li
                       key={pet.id}
                       className="p-4 rounded-lg relative text-[var(--textColor)] bg-[var(--background2)]"
                     >
-                      {console.log(pet)}
+                      
                       <div>Name: {pet.name}</div>
                       <div>Type: {pet.type}</div>
                       <div>Breed: {pet.breed}</div>
@@ -164,7 +166,7 @@ const User = () => {
                       {pet.images?.length > 0 && (
                         <div className="mt-2 absolute top-0 right-4">
                           <Image
-                            src={`${BACKEND_API_PORT}/media/${pet.images}`}
+                            src={pet.images[0].trim()}
                             alt="Pet"
                             width={100}
                             height={100}
@@ -192,8 +194,7 @@ const User = () => {
                           Report
                         </button>
                       </div>
-                    </li>) : (<></>)}</div>
-
+                    </li>
                   ))}
                 </ul>
               ) : (
