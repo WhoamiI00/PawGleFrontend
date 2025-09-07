@@ -98,7 +98,7 @@ const User = () => {
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--background2)] to-[var(--backgroundColor)] text-white">
 
         <main className="flex flex-col md:flex-row p-6 space-x-0 md:space-x-6 mt-20">
-          <div className="w-full md:w-1/4 p-4 rounded-lg shadow-lg mb-6 md:mb-0 h-[84vh] overflow-y-auto scroll-smooth text-[var(--textColor)] bg-[var(--backgroundColor)] z-10">
+          <div className="hidden md:block w-full md:w-1/4 p-4 rounded-lg shadow-lg mb-6 md:mb-0 h-[84vh] overflow-y-auto scroll-smooth text-[var(--textColor)] bg-[var(--backgroundColor)] z-10">
             <h2 className="text-xl font-semibold mb-4">Recent Data</h2>
             <ul className="space-y-4">
               <li className="p-4 rounded-lg bg-[var(--background2)] text-[var(--textColor)]">
@@ -113,7 +113,7 @@ const User = () => {
             </ul>
           </div>
 
-          <div className="w-full md:w-3/4 p-6 rounded-lg shadow-lg relative h-[84vh] overflow-y-auto scroll-smooth text-[var(--textColor)] bg-[var(--backgroundColor)]">
+          <div className="w-full p-6 rounded-lg shadow-lg relative h-[84vh] overflow-y-auto scroll-smooth text-[var(--textColor)] bg-[var(--backgroundColor)]">
             <div className="flex items-center mb-6">
               <Image
                 src="/animal.png"
