@@ -182,7 +182,7 @@ export default function SearchPetForm() {
                         <Image
                           width={100}
                           height={100}
-                          src={`${BACKEND_API_PORT}/media/${match.pet.images[0]}`}
+                          src={match.pet.images[0].startsWith('http') ? match.pet.images[0] : `${BACKEND_API_PORT}/media/${match.pet.images[0]}`}
                           alt={`Pet image`}
                           className="w-24 h-24 object-cover rounded-lg"
                         />

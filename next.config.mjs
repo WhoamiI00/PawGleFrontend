@@ -5,7 +5,7 @@ const nextConfig = {
       { hostname: "localhost" },
       { hostname: "127.0.0.1" },
       { hostname: "animalbackend-10hd.onrender.com" },
-      { hostname: "sgvsgwmrgabhwfdxxbnf.supabase.co" }
+      { hostname: "swdeiuaxidlendnoxufa.supabase.co" }
     ],
   },
 };
