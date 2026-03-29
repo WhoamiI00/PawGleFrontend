@@ -8,6 +8,7 @@ import CirclesBackground from "@/components/background";
 const LoginSignup = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const router = useRouter();
   const [passVisible1, setPassVisible1] = useState(true);
   const [passVisible2, setPassVisible2] = useState(true);
@@ -21,6 +22,7 @@ const LoginSignup = () => {
   const toggleMode = () => {
     setIsSignUp((prev) => !prev);
     setErrorMessage("");
+    setSuccessMessage("");
   };
 
   const toggleEye1 = () => {
@@ -72,8 +74,12 @@ const LoginSignup = () => {
       localStorage.setItem("accessToken", result.access);
       localStorage.setItem("refreshToken", result.refresh);
       router.push("/user");
+    } else if (isSignUp && response.ok) {
+      setSuccessMessage(result.message || "Account created! Please check your email to verify your account.");
+      setErrorMessage("");
     } else {
-      setErrorMessage(result.detail || "An error occurred. Please try again.");
+      setErrorMessage(result.detail || result.error || "An error occurred. Please try again.");
+      setSuccessMessage("");
     }
   };
 
@@ -190,6 +196,11 @@ const LoginSignup = () => {
               {errorMessage && (
                 <p className="text-[var(--primaryColor)] mt-4 text-center">
                   {errorMessage}
+                </p>
+              )}
+              {successMessage && (
+                <p className="text-green-500 mt-4 text-center font-semibold">
+                  {successMessage}
                 </p>
               )}
             </motion.div>

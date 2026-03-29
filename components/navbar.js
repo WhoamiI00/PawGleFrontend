@@ -38,14 +38,14 @@ export default function Navbar() {
         const data = await response.json();
         localStorage.setItem("accessToken", data.access);
         setIsLoggedIn(true);
-        console.log("Token refreshed successfully");
-      } else {
-        // If refresh token is invalid, log the user out
+      } else if (response.status === 401) {
+        // Only log out if the server explicitly rejects the refresh token
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         setIsLoggedIn(false);
       }
     } catch (error) {
+      // Network error — keep user logged in, don't remove tokens
       console.error("Error refreshing token:", error);
     }
   }, [BACKEND_API_PORT]);
@@ -54,12 +54,13 @@ export default function Navbar() {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshTokenValue = localStorage.getItem("refreshToken");
-    setIsLoggedIn(!!accessToken && !!refreshTokenValue);
-    
-    if (accessToken && refreshTokenValue) {
+    const loggedIn = !!accessToken && !!refreshTokenValue;
+    setIsLoggedIn(loggedIn);
+
+    if (loggedIn) {
       refreshToken();
     }
-  }, [refreshToken]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set up periodic token refresh
   useEffect(() => {
@@ -201,21 +202,20 @@ export default function Navbar() {
                     <FaCog />
                     <span>Settings</span>
                   </li>} */}
-                  <li
-                    className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2"
-                    onClick={logout}
-                  >
-                    <FiLogOut className="text-[22px]" />
-                    {isLoggedIn ? (
-                      <Link href="/">
-                        <span>LogOut</span>
-                      </Link>
-                    ) : (
-                      <Link href="/login">
-                        <span>Login</span>
-                      </Link>
-                    )}
-                  </li>
+                  {typeof window !== "undefined" && localStorage.getItem("accessToken") ? (
+                    <li
+                      className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2 cursor-pointer"
+                      onClick={logout}
+                    >
+                      <FiLogOut className="text-[22px]" />
+                      <Link href="/"><span>LogOut</span></Link>
+                    </li>
+                  ) : (
+                    <li className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2 cursor-pointer">
+                      <FiLogOut className="text-[22px]" />
+                      <Link href="/login"><span>Login</span></Link>
+                    </li>
+                  )}
                 </ul>
               </motion.div>
             )}
