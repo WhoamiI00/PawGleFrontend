@@ -1,19 +1,24 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 
-// Verify Resend webhook signature using HMAC SHA256
+export const runtime = "edge";
+
+// Verify Resend webhook signature using Web Crypto API (edge-compatible)
 async function verifySignature(payload, signature, secret) {
   if (!signature) return false;
 
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(payload)
-    .digest("base64");
-
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
   );
+
+  const signatureBuffer = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
+  const expectedSignature = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+
+  return signature === expectedSignature;
 }
 
 // POST /api/resend/inbound — handles incoming email webhooks from Resend
