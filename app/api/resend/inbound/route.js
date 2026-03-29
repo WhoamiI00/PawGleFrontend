@@ -1,12 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import crypto from "crypto";
 
 // Verify Resend webhook signature using HMAC SHA256
-async function verifySignature(
-  payload: string,
-  signature: string | null,
-  secret: string
-): Promise<boolean> {
+async function verifySignature(payload, signature, secret) {
   if (!signature) return false;
 
   const expectedSignature = crypto
@@ -20,35 +16,8 @@ async function verifySignature(
   );
 }
 
-// Resend inbound email webhook payload
-interface ResendEmailHeader {
-  name: string;
-  value: string;
-}
-
-interface ResendEmailPayload {
-  from: string;
-  to: string;
-  subject: string;
-  text?: string;
-  html?: string;
-  created_at: string;
-  headers: ResendEmailHeader[];
-  reply_to?: string;
-  cc?: string;
-  bcc?: string;
-  message_id?: string;
-  spam_score?: number;
-}
-
-interface ResendWebhookEvent {
-  type: string;
-  created_at: string;
-  data: ResendEmailPayload;
-}
-
 // POST /api/resend/inbound — handles incoming email webhooks from Resend
-export async function POST(request: NextRequest) {
+export async function POST(request) {
   const secret = process.env.RESEND_WEBHOOK_SECRET;
   if (!secret) {
     console.error("RESEND_WEBHOOK_SECRET is not set");
@@ -79,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Parse JSON safely
-  let body: ResendWebhookEvent;
+  let body;
   try {
     body = JSON.parse(rawBody);
   } catch {
