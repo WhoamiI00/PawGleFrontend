@@ -75,16 +75,6 @@ const PawGle = () => {
 
   return (
     <div className="min-h-screen flex flex-col text relative overflow-hidden">
-      {/* <video
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
-        autoPlay
-        loop
-        muted
-        src="/animal.mp4"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent "></div> */}
-
       <div className="bg"></div>
       <header className="flex justify-between items-center px-8 py-3 shadow-lg fixed w-full z-50 bg-[var(--backgroundColor)]">
         <div className="text-4xl font-bold">
