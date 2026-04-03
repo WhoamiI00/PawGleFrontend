@@ -174,7 +174,7 @@ export default function SearchPetForm() {
                           Status: {match.pet_location.status}
                         </p>
                       )}
-                      {console.log(match)}
+
                     </div>
                     <div className="images flex flex-col items-center gap-2">
                       {/* Show only one image: pet image if available, else pet_location image */}

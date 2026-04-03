@@ -430,7 +430,7 @@ export default function PetMediaEditor() {
       // Note: This is a simplified approach - full object restoration would require more complex handling
       if (edit.edit_metadata && edit.edit_metadata.objects && edit.edit_metadata.objects.objects) {
         // For now, we're just loading the image as the full object restoration is complex
-        console.log("Object data available but using simplified loading")
+        // Object data available but using simplified loading
       }
 
       // Apply filter if available
@@ -466,7 +466,7 @@ export default function PetMediaEditor() {
   // Import previewed image to canvas - FIXED VERSION
   const importImageToCanvas = () => {
     if (!selectedImagePreview || !isCanvasReady || !fabricCanvasRef.current) {
-      console.log("Missing prerequisites for import:", {
+      console.error("Missing prerequisites for import:", {
         hasImagePreview: !!selectedImagePreview,
         isCanvasReady,
         hasCanvas: !!fabricCanvasRef.current,
@@ -474,7 +474,6 @@ export default function PetMediaEditor() {
       return
     }
 
-    console.log("Starting image import to canvas")
     const canvas = fabricCanvasRef.current
 
     // Create a native browser Image element (not Next.js Image)
@@ -482,7 +481,6 @@ export default function PetMediaEditor() {
     imgElement.crossOrigin = "anonymous" // Add this to avoid CORS issues
 
     imgElement.onload = () => {
-      console.log("Image loaded, dimensions:", imgElement.width, imgElement.height)
 
       // Create fabric image from loaded element
       const fabricImage = new fabric.Image(imgElement)
@@ -517,7 +515,6 @@ export default function PetMediaEditor() {
         y: Math.round(fabricImage.top),
       })
       updateLayersList()
-      console.log("Image successfully added to canvas")
 
       // Clear the selected image preview so user can add another image
       setSelectedImagePreview(null)
@@ -921,7 +918,6 @@ export default function PetMediaEditor() {
       const blob = await fetch(dataUrl).then((r) => r.blob())
 
       const processedImageBlob = await removeBackground(blob, {
-        progress: (progress) => console.log(`Processing: ${progress * 100}%`),
       })
 
       const processedDataUrl = URL.createObjectURL(processedImageBlob)

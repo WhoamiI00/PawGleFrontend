@@ -21,6 +21,7 @@ export default function EditPetForm() {
     },
     subNote: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [existingImages, setExistingImages] = useState([]);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [backgroundHeight, setBackgroundHeight] = useState("auto");
@@ -70,6 +71,7 @@ export default function EditPetForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
     const formData = new FormData();
@@ -127,12 +129,14 @@ export default function EditPetForm() {
           console.error("Error adding new pet:", text);
         } else {
           const data = await postResponse.json();
-          console.log("Pet added successfully", data);
+
           window.location.href = "/user";
         }
       }
     } catch (error) {
       console.error("Network Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -442,9 +446,10 @@ export default function EditPetForm() {
                   <div>
                     <button
                       type="submit"
-                      className="w-full bg-[var(--primaryColor)] text-[var(--textColor3)] p-3 rounded-lg font-bold hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] transition duration-300 ease-in-out"
+                      disabled={isLoading}
+                      className="w-full bg-[var(--primaryColor)] text-[var(--textColor3)] p-3 rounded-lg font-bold hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] transition duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      Submit Edits
+                      {isLoading ? "Submitting..." : "Submit Edits"}
                     </button>
                   </div>
                 </div>

@@ -22,7 +22,8 @@ export default function AddPetForm() {
     },
     subNote: "", // Temporary value for the sub-note input
   });
-  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false); // To toggle the additional info section
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [backgroundHeight, setBackgroundHeight] = useState("auto");
 
   const BACKEND_API_PORT = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
@@ -51,6 +52,7 @@ export default function AddPetForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
     const formData = new FormData();
@@ -87,11 +89,13 @@ export default function AddPetForm() {
         console.error("Error response:", text);
       } else {
         const data = await response.json();
-        console.log("Pet added successfully", data);
+
         window.location.href = "/user";
       }
     } catch (error) {
       console.error("Network Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -382,9 +386,10 @@ export default function AddPetForm() {
                 <div>
                   <button
                     type="submit"
-                    className="w-full bg-[var(--primaryColor)] text-[var(--textColor3)] p-3 rounded-lg font-bold hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] transition duration-300 ease-in-out"
+                    disabled={isLoading}
+                    className="w-full bg-[var(--primaryColor)] text-[var(--textColor3)] p-3 rounded-lg font-bold hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] transition duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Add Pet
+                    {isLoading ? "Adding Pet..." : "Add Pet"}
                   </button>
                 </div>
               </form>

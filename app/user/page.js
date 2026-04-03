@@ -13,6 +13,7 @@ const User = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const BACKEND_API_PORT = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
 
@@ -31,8 +32,7 @@ const User = () => {
         }
 
         const data = await response.json();
-        console.log(data);
-        console.log(data.user)
+
         setOwner(data.user);
         setPets(data.pets);
       } catch (err) {
@@ -182,7 +182,7 @@ const User = () => {
                           <CiEdit className="mr-2" /> Edit
                         </button>
                         <button
-                          onClick={() => deletePet(pet.id)}
+                          onClick={() => setDeleteConfirm(pet.id)}
                           className="py-2 px-4 rounded-lg shadow-lg transition duration-200 hover:scale-105 hover:bg-[var(--c4)] hover:text-[var(--textColor)] bg-[var(--c2)] text-[var(--textColor3)]"
                         >
                           Delete
@@ -214,6 +214,34 @@ const User = () => {
         </main>
         <Footer />
       </div>
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-[var(--background2)] rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-bold text-[var(--textColor)] mb-2">Delete Pet</h3>
+            <p className="text-[var(--textColor2)] mb-6">
+              Are you sure you want to delete this pet? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 rounded-lg bg-[var(--backgroundColor)] text-[var(--textColor)] hover:bg-[var(--c3)] transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  deletePet(deleteConfirm);
+                  setDeleteConfirm(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-200"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

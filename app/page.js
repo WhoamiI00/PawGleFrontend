@@ -267,7 +267,7 @@ const CustomAccordion = () => {
   const [openIndex, setOpenIndex] = useState(null);
 
   const handleToggle = (index) => {
-    console.log(index);
+
     setOpenIndex(openIndex === index ? null : index);
   };
 
