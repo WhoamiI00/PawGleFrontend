@@ -9,6 +9,7 @@ const LoginSignup = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [passVisible1, setPassVisible1] = useState(true);
   const [passVisible2, setPassVisible2] = useState(true);
@@ -60,26 +61,34 @@ const LoginSignup = () => {
       }
     }
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    setIsLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    const result = await response.json();
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (result.access) {
-      localStorage.setItem("accessToken", result.access);
-      localStorage.setItem("refreshToken", result.refresh);
-      router.push("/user");
-    } else if (isSignUp && response.ok) {
-      setSuccessMessage(result.message || "Account created! Please check your email to verify your account.");
-      setErrorMessage("");
-    } else {
-      setErrorMessage(result.detail || result.error || "An error occurred. Please try again.");
-      setSuccessMessage("");
+      const result = await response.json();
+
+      if (result.access) {
+        localStorage.setItem("accessToken", result.access);
+        localStorage.setItem("refreshToken", result.refresh);
+        router.push("/user");
+      } else if (isSignUp && response.ok) {
+        setSuccessMessage(result.message || "Account created! Please check your email to verify your account.");
+      } else {
+        setErrorMessage(result.detail || result.error || "An error occurred. Please try again.");
+      }
+    } catch {
+      setErrorMessage("Network error. Please check your connection.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -188,9 +197,12 @@ const LoginSignup = () => {
                 )}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[var(--primaryColor)] rounded-lg text-[var(--textColor3)] hover:bg-[var(--primary1)] transition duration-200 shadow-md hover:shadow-lg"
+                  disabled={isLoading}
+                  className="w-full py-3 bg-[var(--primaryColor)] rounded-lg text-[var(--textColor3)] hover:bg-[var(--primary1)] transition duration-200 shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {isSignUp ? "Sign Up" : "Log In"}
+                  {isLoading
+                    ? (isSignUp ? "Signing Up..." : "Logging In...")
+                    : (isSignUp ? "Sign Up" : "Log In")}
                 </button>
               </form>
               {errorMessage && (

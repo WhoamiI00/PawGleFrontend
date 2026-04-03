@@ -21,6 +21,7 @@ export default function EditPetForm() {
     },
     subNote: "",
   });
+  const [existingImages, setExistingImages] = useState([]);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [backgroundHeight, setBackgroundHeight] = useState("auto");
 
@@ -31,7 +32,9 @@ export default function EditPetForm() {
 
     const storedPet = JSON.parse(localStorage.getItem("petEditData"));
     if (storedPet) {
-      setPet(storedPet);
+      // Separate existing image paths from the pet data
+      setExistingImages(storedPet.images || []);
+      setPet({ ...storedPet, images: [] });
     }
     localStorage.removeItem("petEditData");
   }, []);
@@ -51,11 +54,14 @@ export default function EditPetForm() {
   };
 
   const removeImage = (image) => {
-    localStorage.setItem("img",image);
     setPet({
       ...pet,
       images: pet.images.filter((img) => img !== image),
     });
+  };
+
+  const removeExistingImage = (image) => {
+    setExistingImages(existingImages.filter((img) => img !== image));
   };
 
   const togglePublic = () => {
@@ -78,10 +84,16 @@ export default function EditPetForm() {
       : { ...pet.additionalInfo, subNotes: [] };
     formData.append("additionalInfo", JSON.stringify(additionalInfo));
 
+    // Send new file uploads
     if (pet.images.length > 0) {
       pet.images.forEach((image) => {
         formData.append("images", image);
       });
+    }
+
+    // Send existing image paths so the backend can keep them
+    if (existingImages.length > 0) {
+      formData.append("existing_images", JSON.stringify(existingImages));
     }
 
     try {
@@ -251,23 +263,38 @@ export default function EditPetForm() {
                         htmlFor="images"
                         className="flex items-center justify-center px-4 py-2 bg-[var(--primaryColor)] text-[var(--textColor3)] font-bold rounded-lg cursor-pointer hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] hover:shadow-lg transition-all duration-300 ease-in-out"
                       >
-                        {pet.images.length > 0
-                          ? `${pet.images.length} file(s) selected`
+                        {existingImages.length + pet.images.length > 0
+                          ? `${existingImages.length + pet.images.length} file(s) selected`
                           : "Choose File"}
                       </label>
                     </div>
                     <div>
+                      {existingImages.length > 0 && (
+                        <ul className="mt-2 text-[var(--textColor2)]">
+                          {existingImages.map((image, index) => (
+                            <li key={`existing-${index}`} className="flex justify-between">
+                              <span>{image.split("/").pop()}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeExistingImage(image)}
+                                className="text-[var(--primaryColor)] hover:text-[var(--textColor3)]"
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                       {pet.images.length > 0 && (
                         <ul className="mt-2 text-[var(--textColor2)]">
                           {pet.images.map((image, index) => (
-                            <li key={index} className="flex justify-between">
+                            <li key={`new-${index}`} className="flex justify-between">
                               <span>{image.name}</span>
                               <button
                                 type="button"
                                 onClick={() => removeImage(image)}
                                 className="text-[var(--primaryColor)] hover:text-[var(--textColor3)]"
                               >
-
                                 Remove
                               </button>
                             </li>

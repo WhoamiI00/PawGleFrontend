@@ -754,13 +754,14 @@ const CirclesBackground = ({ height }) => {
       </li>
       <style jsx>{`
         .circles {
-          position: absolute;
+          position: fixed;
           top: 0;
           left: 0;
           width: 100%;
-          height: ${height}px;
+          height: 100vh;
           overflow: hidden;
           z-index: 0;
+          pointer-events: none;
         }
         .circles li {
           position: absolute;
