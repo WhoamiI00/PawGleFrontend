@@ -74,5 +74,33 @@ export async function POST(request) {
   console.log("HTML:", html ? `${html.length} chars` : "none");
   console.log("Full payload:", JSON.stringify(body, null, 2));
 
+  // Forward the parsed reply to the Django backend for dispatch to the other party
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_PORT || "";
+  const forwardSecret = process.env.FORWARD_REPLY_SECRET;
+
+  try {
+    const res = await fetch(`${backendUrl}/api/auth/email/forward-reply/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Forward-Secret": forwardSecret,
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        subject,
+        text,
+        html,
+        attachments: body.data?.attachments ?? [],
+      }),
+    });
+    if (!res.ok) {
+      console.error("Backend forward failed:", res.status, await res.text());
+    }
+  } catch (err) {
+    console.error("Backend forward error:", err);
+  }
+
+  // Always return 200 so Resend doesn't retry endlessly
   return NextResponse.json({ success: true });
 }
