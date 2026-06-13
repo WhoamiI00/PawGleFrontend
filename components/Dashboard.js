@@ -6,9 +6,15 @@ import { Sidebar } from "@/components/Sidebar";
 import Navbar from "@/components/navbar";
 
 const categories = [
-  { id: "Dogs", name: "Dogs" },
-  { id: "Cats", name: "Cats" },
+  { id: "All", name: "All" },
+  { id: "Dog", name: "Dogs" },
+  { id: "Cat", name: "Cats" },
+  { id: "Bird", name: "Birds" },
+  { id: "Rabbit", name: "Rabbits" },
+  { id: "Hamster", name: "Hamsters" },
   { id: "Cattle", name: "Cattle" },
+  { id: "Horse", name: "Horses" },
+  { id: "Other", name: "Other" },
 ];
 
 export default function Dashboard() {

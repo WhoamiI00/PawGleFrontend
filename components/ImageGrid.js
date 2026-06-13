@@ -7,7 +7,10 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
 
 export function ImageGrid({ category }) {
   const [pets, setPets] = useState([]);
-  const filteredPets = pets.filter((pet) => pet.type === category);
+  const filteredPets =
+    category === "All"
+      ? pets
+      : pets.filter((pet) => pet.type === category);
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -32,13 +35,22 @@ export function ImageGrid({ category }) {
             className="overflow-hidden bg-[var(--backgroundColor)] shadow-lg text-[var(--textColor)] border-none"
           >
             <CardContent className="p-0">
-              <Image
-                src={`${BACKEND_URL}/media/${pet.images[0]}`}
-                alt={pet.name}
-                width={300}
-                height={250}
-                className="w-full h-[250px] object-cover"
-              />
+              {pet.images?.[0] ? (
+                <Image
+                  src={pet.images[0]}
+                  alt={pet.name}
+                  width={300}
+                  height={250}
+                  className="w-full h-[250px] object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-[250px] bg-gray-200" />
+              )}
+              <div className="p-3">
+                <p className="font-semibold">{pet.name}</p>
+                <p className="text-sm opacity-70">{pet.breed}</p>
+              </div>
             </CardContent>
           </Card>
         ))
