@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Footer from "@/components/footer";
 import CirclesBackground from "@/components/background";
 import { animalBreeds, animalCategories } from "@/components/AnimalTypes";
+import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
 
 export default function EditPetForm() {
   const [pet, setPet] = useState({
@@ -72,7 +73,8 @@ export default function EditPetForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const token = localStorage.getItem("accessToken");
+    await bootstrapAccessToken();
+    const token = getAccessToken();
 
     const formData = new FormData();
     formData.append("name", pet.name);
@@ -103,6 +105,7 @@ export default function EditPetForm() {
         `${BACKEND_API_PORT}/api/auth/pets/${pet.id}/delete/`,
         {
           method: "DELETE",
+          credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -117,6 +120,7 @@ export default function EditPetForm() {
           `${BACKEND_API_PORT}/api/auth/pets/add/`,
           {
             method: "POST",
+            credentials: "include",
             headers: {
               Authorization: `Bearer ${token}`,
             },

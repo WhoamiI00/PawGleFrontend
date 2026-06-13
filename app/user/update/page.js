@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import CirclesBackground from "@/components/background";
 import { animalBreeds, animalCategories } from "@/components/AnimalTypes";
+import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
 
 export default function AddPetForm() {
   const [pet, setPet] = useState({
@@ -53,7 +54,8 @@ export default function AddPetForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const token = localStorage.getItem("accessToken");
+    await bootstrapAccessToken();
+    const token = getAccessToken();
 
     const formData = new FormData();
     formData.append("name", pet.name);
@@ -78,6 +80,7 @@ export default function AddPetForm() {
     try {
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/pets/add/`, {
         method: "POST",
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -6,6 +6,7 @@ import CirclesBackground from "@/components/background";
 import Link from "next/link";
 import { CiEdit } from "react-icons/ci";
 import Image from "next/image";
+import { bootstrapAccessToken, getAccessToken } from "../api/auth";
 
 const User = () => {
   const [owner, setOwner] = useState(null);
@@ -20,11 +21,13 @@ const User = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        await bootstrapAccessToken();
         const response = await fetch(`${BACKEND_API_PORT}/api/auth/profile/`, {
           method: "GET",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${getAccessToken()}`,
           },
         });
         if (!response.ok) {
@@ -52,9 +55,10 @@ const User = () => {
         `${BACKEND_API_PORT}/api/auth/pets/${petId}/delete/`,
         {
           method: "DELETE",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${getAccessToken()}`,
           },
         }
       );

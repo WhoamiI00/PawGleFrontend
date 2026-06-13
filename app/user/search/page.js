@@ -7,6 +7,7 @@ import CirclesBackground from "@/components/background";
 import Image from "next/image";
 import { IoShareSharp } from "react-icons/io5";
 import Link from "next/link";
+import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
 
 export default function SearchPetForm() {
   const [files, setFiles] = useState([]);
@@ -34,7 +35,8 @@ export default function SearchPetForm() {
     }
 
     setIsLoading(true);
-    const token = localStorage.getItem("accessToken");
+    await bootstrapAccessToken();
+    const token = getAccessToken();
 
     const formData = new FormData();
     // Use the first image only - backend expects "image" not "images"
@@ -45,6 +47,7 @@ export default function SearchPetForm() {
         `${BACKEND_API_PORT}/api/auth/pets/search/`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
           },

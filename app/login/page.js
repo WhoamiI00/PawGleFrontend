@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import Script from "next/script";
 import CirclesBackground from "@/components/background";
+import { setAccessToken } from "../api/auth";
 
 const LoginSignup = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -33,12 +34,12 @@ const LoginSignup = () => {
       const res = await fetch(`${BACKEND_API_PORT}/api/auth/google/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ credential: response.credential }),
       });
       const data = await res.json();
       if (res.ok && data.access) {
-        localStorage.setItem("accessToken", data.access);
-        localStorage.setItem("refreshToken", data.refresh);
+        setAccessToken(data.access);
         router.push("/user");
       } else {
         setErrorMessage(data.error || "Google sign-in failed.");
@@ -129,14 +130,14 @@ const LoginSignup = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (result.access) {
-        localStorage.setItem("accessToken", result.access);
-        localStorage.setItem("refreshToken", result.refresh);
+        setAccessToken(result.access);
         router.push("/user");
       } else if (isSignUp && response.ok) {
         setSuccessMessage(result.message || "Account created! Please check your email to verify your account.");

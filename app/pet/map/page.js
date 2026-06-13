@@ -6,6 +6,7 @@ import CirclesBackground from "@/components/background";
 import Map from "@/components/Map";
 import Link from "next/link";
 import Image from "next/image"
+import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
 
 export default function PetMapPage() {
   const [pets, setPets] = useState([]);
@@ -86,11 +87,13 @@ export default function PetMapPage() {
           endpoint = `${BACKEND_API_PORT}/api/auth/pets/${view}/locations/`;
         }
 
+        await bootstrapAccessToken();
         const response = await fetch(endpoint, {
           method: "GET",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${getAccessToken()}`,
           },
         });
 
@@ -157,9 +160,10 @@ export default function PetMapPage() {
     try {
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/pets/locations/${locationId}/status/`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${getAccessToken()}`,
         },
         body: JSON.stringify({ status: 'resolved' })
       });
@@ -227,9 +231,10 @@ export default function PetMapPage() {
 
         const response = await fetch(`${BACKEND_API_PORT}/api/auth/pets/contact-owner/`, {
           method: 'POST',
+          credentials: "include",
           body: formPayload,
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+            'Authorization': `Bearer ${getAccessToken()}`,
           }
         });
 

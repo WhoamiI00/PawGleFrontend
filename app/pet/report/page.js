@@ -8,6 +8,7 @@ import Link from "next/link";
 import Footer from "@/components/footer";
 import { animalBreeds, animalCategories } from "@/components/AnimalTypes";
 import Image from "next/image"
+import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
 
 export default function ReportPetPage() {
   const router = useRouter();
@@ -155,10 +156,12 @@ export default function ReportPetPage() {
         formData.append('image', petData.image);
       }
 
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-      
+      await bootstrapAccessToken();
+      const accessToken = getAccessToken();
+
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/pets/report/`, {
         method: "POST",
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

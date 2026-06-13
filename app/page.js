@@ -16,6 +16,7 @@ import Footer from "@/components/footer";
 import Link from "next/link";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import CirclesBackground from "@/components/background";
+import { bootstrapAccessToken } from "./api/auth";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
 
@@ -44,8 +45,7 @@ const PawGle = () => {
 
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("accessToken");
-    setUserInfoExists(!!userInfo);
+    bootstrapAccessToken().then((token) => setUserInfoExists(Boolean(token)));
 
     const fetchusersCount = async () => {
       const response = await fetch(`${BACKEND_URL}/api/auth/users/count/`);

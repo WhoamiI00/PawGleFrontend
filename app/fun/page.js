@@ -5,6 +5,7 @@ import * as fabric from "fabric"
 import CirclesBackground from "@/components/background"
 import Footer from "@/components/footer"
 import { removeBackground } from "@imgly/background-removal"
+import { bootstrapAccessToken, getAccessToken } from "../api/auth"
 import {
   Palette,
   Move,
@@ -335,8 +336,10 @@ export default function PetMediaEditor() {
   // Fetch recent edits
   const fetchRecentEdits = async () => {
     try {
-      const token = localStorage.getItem("accessToken")
+      await bootstrapAccessToken()
+      const token = getAccessToken()
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/edited-pet-images/`, {
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -1011,9 +1014,11 @@ export default function PetMediaEditor() {
       formData.append("edited_image", editedFile)
       formData.append("edit_metadata", JSON.stringify({ filters: selectedFilter, objects: canvas.toJSON() }))
 
-      const token = localStorage.getItem("accessToken")
+      await bootstrapAccessToken()
+      const token = getAccessToken()
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/edited-pet-images/`, {
         method: "POST",
+        credentials: "include",
         headers: {
           Authorization: `Bearer ${token}`,
         },

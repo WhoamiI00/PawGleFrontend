@@ -9,6 +9,12 @@ import Image from "next/image";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { MdReport } from "react-icons/md";
 import { IoLogoOctocat } from "react-icons/io5";
+import {
+  bootstrapAccessToken,
+  getAccessToken,
+  isAuthenticated,
+  logout as logoutClient,
+} from "../app/api/auth";
 
 export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -19,46 +25,21 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const BACKEND_API_PORT = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
 
-  const refreshToken = useCallback(async () => {
-    try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) {
-        setIsLoggedIn(false);
-        return;
-      }
+  // Silently mint an access token from the httpOnly refresh cookie if present.
+  // Returns true when the session was restored.
+  const restoreSession = useCallback(async () => {
+    const token = await bootstrapAccessToken();
+    setIsLoggedIn(Boolean(token));
+    return Boolean(token);
+  }, []);
 
-      const response = await fetch(`${BACKEND_API_PORT}/api/token/refresh/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refresh: refreshToken,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("accessToken", data.access);
-        setIsLoggedIn(true);
-      } else if (response.status === 401) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setIsLoggedIn(false);
-      }
-    } catch (error) {
-      console.error("Error refreshing token:", error);
-    }
-  }, [BACKEND_API_PORT]);
-
-  // Fetch notifications
   const fetchNotifications = useCallback(async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     if (!token) return;
-
     try {
       const response = await fetch(`${BACKEND_API_PORT}/api/auth/notifications/`, {
         headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (response.ok) {
         const data = await response.json();
@@ -71,13 +52,13 @@ export default function Navbar() {
   }, [BACKEND_API_PORT]);
 
   const markAsRead = async (id) => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     if (!token) return;
-
     try {
       await fetch(`${BACKEND_API_PORT}/api/auth/notifications/${id}/read/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
@@ -89,13 +70,13 @@ export default function Navbar() {
   };
 
   const markAllAsRead = async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     if (!token) return;
-
     try {
       await fetch(`${BACKEND_API_PORT}/api/auth/notifications/read-all/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       setUnreadCount(0);
@@ -119,17 +100,13 @@ export default function Navbar() {
     }
   };
 
-  // Check login status on mount
+  // Check login status on mount: try to mint an access token from the refresh
+  // cookie. If that fails, treat the user as logged out.
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshTokenValue = localStorage.getItem("refreshToken");
-    const loggedIn = !!accessToken && !!refreshTokenValue;
-    setIsLoggedIn(loggedIn);
-
-    if (loggedIn) {
-      refreshToken();
-      fetchNotifications();
-    }
+    (async () => {
+      const ok = await restoreSession();
+      if (ok) fetchNotifications();
+    })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Poll notifications every 30 seconds
@@ -139,16 +116,6 @@ export default function Navbar() {
       return () => clearInterval(interval);
     }
   }, [isLoggedIn, fetchNotifications]);
-
-  // Set up periodic token refresh
-  useEffect(() => {
-    if (isLoggedIn) {
-      const refreshInterval = setInterval(() => {
-        refreshToken();
-      }, 3 * 60 * 500);
-      return () => clearInterval(refreshInterval);
-    }
-  }, [isLoggedIn, refreshToken]);
 
   const toggleDropdown = (event) => {
     event.stopPropagation();
@@ -190,9 +157,8 @@ export default function Navbar() {
     };
   }, [showDropdown, showNotifications]);
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  const logout = async () => {
+    await logoutClient();
     setIsLoggedIn(false);
     setNotifications([]);
     setUnreadCount(0);
