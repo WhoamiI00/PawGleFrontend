@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import Script from "next/script";
 import CirclesBackground from "@/components/background";
 
 const LoginSignup = () => {
@@ -16,9 +17,66 @@ const LoginSignup = () => {
   const [windowHeight, setWindowHeight] = useState(0);
 
   const BACKEND_API_PORT = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
+  const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const googleBtnRef = useRef(null);
+  const googleInitialized = useRef(false);
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
+
+  const handleGoogleCredential = useCallback(async (response) => {
+    setIsLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const res = await fetch(`${BACKEND_API_PORT}/api/auth/google/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+      const data = await res.json();
+      if (res.ok && data.access) {
+        localStorage.setItem("accessToken", data.access);
+        localStorage.setItem("refreshToken", data.refresh);
+        router.push("/user");
+      } else {
+        setErrorMessage(data.error || "Google sign-in failed.");
+      }
+    } catch {
+      setErrorMessage("Network error during Google sign-in.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [BACKEND_API_PORT, router]);
+
+  const initializeGoogleButton = useCallback(() => {
+    if (
+      googleInitialized.current ||
+      typeof window === "undefined" ||
+      !window.google ||
+      !GOOGLE_CLIENT_ID ||
+      !googleBtnRef.current
+    ) {
+      return;
+    }
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+    });
+    window.google.accounts.id.renderButton(googleBtnRef.current, {
+      theme: "filled_black",
+      size: "large",
+      width: 320,
+      text: "continue_with",
+      shape: "rectangular",
+    });
+    googleInitialized.current = true;
+  }, [GOOGLE_CLIENT_ID, handleGoogleCredential]);
+
+  useEffect(() => {
+    initializeGoogleButton();
+  }, [initializeGoogleButton]);
 
   const toggleMode = () => {
     setIsSignUp((prev) => !prev);
@@ -215,8 +273,22 @@ const LoginSignup = () => {
                   {successMessage}
                 </p>
               )}
+
+              <div className="flex items-center my-6">
+                <div className="flex-1 h-px bg-[var(--textColor2)] opacity-30" />
+                <span className="px-3 text-sm text-[var(--textColor2)]">or</span>
+                <div className="flex-1 h-px bg-[var(--textColor2)] opacity-30" />
+              </div>
+
+              <div ref={googleBtnRef} className="flex justify-center" />
             </motion.div>
           </AnimatePresence>
+
+          <Script
+            src="https://accounts.google.com/gsi/client"
+            strategy="afterInteractive"
+            onLoad={initializeGoogleButton}
+          />
 
           <div className="text-center mt-6">
             <p className="text-sm text-[var(--textColor2)]">
