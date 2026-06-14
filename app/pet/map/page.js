@@ -432,84 +432,72 @@ export default function PetMapPage() {
               </div>
             )}
 
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={() => setView("all")}
-                className={`py-2 px-4 rounded-lg shadow-lg transition duration-200 ${view === "all"
-                  ? "bg-[var(--primaryColor)] text-[var(--textColor3)]"
-                  : "bg-[var(--background2)] text-[var(--textColor)] hover:bg-[var(--primary1)]"
-                  }`}
-              >
-                All Pets
-              </button>
-              <button
-                onClick={() => setView("lost")}
-                className={`py-2 px-4 rounded-lg shadow-lg transition duration-200 ${view === "lost"
-                  ? "bg-[var(--primaryColor)] text-[var(--textColor3)]"
-                  : "bg-[var(--background2)] text-[var(--textColor)] hover:bg-[var(--primary1)]"
-                  }`}
-              >
-                Lost Pets
-              </button>
-              <button
-                onClick={() => setView("found")}
-                className={`py-2 px-4 rounded-lg shadow-lg transition duration-200 ${view === "found"
-                  ? "bg-[var(--primaryColor)] text-[var(--textColor3)]"
-                  : "bg-[var(--background2)] text-[var(--textColor)] hover:bg-[var(--primary1)]"
-                  }`}
-              >
-                Found Pets
-              </button>
-              <button
-                onClick={() => setView("user")}
-                className={`py-2 px-4 rounded-lg shadow-lg transition duration-200 ${view === "user"
-                  ? "bg-[var(--primaryColor)] text-[var(--textColor3)]"
-                  : "bg-[var(--background2)] text-[var(--textColor)] hover:bg-[var(--primary1)]"
-                  }`}
-              >
-                My Pets
-              </button>
+            {/*
+              Mobile-first filter row: horizontal scroll on phones so the four
+              status chips stay one row and stay tappable (44px tall), with
+              the auxiliary actions sliding off to the right behind a swipe.
+              md+ falls back to the original flex-wrap layout.
+            */}
+            <div className="mb-6 -mx-2 md:mx-0">
+              <div className="flex md:flex-wrap gap-2 overflow-x-auto md:overflow-visible px-2 pb-2 md:pb-0 snap-x snap-mandatory md:snap-none">
+                {[
+                  { key: "all", label: "All Pets" },
+                  { key: "lost", label: "Lost" },
+                  { key: "found", label: "Found" },
+                  { key: "user", label: "Mine" },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setView(key)}
+                    className={`shrink-0 snap-start min-h-[44px] py-2 px-4 rounded-full text-sm font-medium transition duration-200 ${
+                      view === key
+                        ? "bg-[var(--primaryColor)] text-[var(--textColor3)] shadow-lg"
+                        : "bg-[var(--background2)] text-[var(--textColor)] hover:bg-[var(--primary1)]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
 
-              {/* Center on user location button */}
-              {userLocation && (
-                <button
-                  onClick={() => {
-                    if (userLocation) {
+                {userLocation && (
+                  <button
+                    onClick={() => {
                       setMapCenter(userLocation);
                       setMapZoom(20);
-                      setMapKey(prev => prev + 1); // Force re-render
-                    }
-                  }}
-                  className="py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)]"
-                >
-                  Center on My Location
-                </button>
-              )}
+                      setMapKey((prev) => prev + 1);
+                    }}
+                    className="shrink-0 snap-start min-h-[44px] py-2 px-4 rounded-full text-sm font-medium bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] shadow"
+                  >
+                    📍 Center on me
+                  </button>
+                )}
 
-              <Link
-                href="/pet/report"
-                className="ml-auto py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] hover:text-[var(--textColor)]"
-              >
-                Report Pet
-              </Link>
-              <Link
-                href="/user"
-                className="py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] hover:text-[var(--textColor)]"
-              >
-                Back to Profile
-              </Link>
-              <Link
-                href="/user/search"
-                className="py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] hover:text-[var(--textColor)]"
-              >
-                Search Pet
-              </Link>
+                {/* Desktop-only secondary actions; on mobile users get the FAB. */}
+                <div className="hidden md:flex md:ml-auto md:gap-2">
+                  <Link
+                    href="/pet/report"
+                    className="py-2 px-4 rounded-full bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] shadow"
+                  >
+                    Report Pet
+                  </Link>
+                  <Link
+                    href="/user"
+                    className="py-2 px-4 rounded-full bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] shadow"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href="/user/search"
+                    className="py-2 px-4 rounded-full bg-[var(--primary1)] text-[var(--textColor3)] hover:bg-[var(--primary2)] shadow"
+                  >
+                    Search
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {loading ? (
-              <div className="h-96 flex items-center justify-center">
-                <p>Loading map data...</p>
-              </div>
+              <div className="h-[60vh] rounded-lg overflow-hidden skeleton" aria-busy="true" aria-label="Loading map" />
             ) : error ? (
               <div className="h-96 flex items-center justify-center text-red-500">
                 <p>{error}</p>
@@ -614,13 +602,25 @@ export default function PetMapPage() {
             </div>
           </div>
           {selectedPet && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-[var(--backgroundColor)] p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center md:items-center"
+              onClick={() => setSelectedPet(null)}
+            >
+              <div
+                className="bg-[var(--backgroundColor)] p-6 w-full md:max-w-md md:w-full max-h-[85vh] md:max-h-[90vh] overflow-y-auto rounded-t-2xl md:rounded-lg shadow-2xl animate-[slideUp_0.2s_ease-out]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Drag handle - visual only, looks like a sheet on mobile */}
+                <div className="md:hidden flex justify-center mb-3">
+                  <div className="w-12 h-1.5 rounded-full bg-[var(--c3)]" />
+                </div>
+
                 <div className="flex justify-between mb-4">
-                  <h3 className="text-xl font-bold text-black">{selectedPet.animal_name}</h3>
+                  <h3 className="text-xl font-bold text-[var(--textColor)]">{selectedPet.animal_name}</h3>
                   <button
                     onClick={() => setSelectedPet(null)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-[var(--textColor2)] hover:text-[var(--textColor)] w-10 h-10 flex items-center justify-center rounded-full"
+                    aria-label="Close"
                   >
                     ✕
                   </button>
@@ -638,7 +638,7 @@ export default function PetMapPage() {
                   </div>
                 )}
 
-                <div className="space-y-2 text-black">
+                <div className="space-y-2 text-[var(--textColor)]">
                   <p><span className="font-semibold">Type:</span> {selectedPet.type}</p>
                   <p><span className="font-semibold">Breed:</span> {selectedPet.breed}</p>
                   <p><span className="font-semibold">Category:</span> {selectedPet.category}</p>
@@ -653,22 +653,18 @@ export default function PetMapPage() {
                   {selectedPet.last_seen_date && (
                     <p><span className="font-semibold">Last seen:</span> {selectedPet.last_seen_date}</p>
                   )}
-                  {selectedPet.status !== "resolved" ? (
+                  {selectedPet.status !== "resolved" && (
                     <div className="pt-4">
                       <button
                         onClick={() => {
                           setShowContactModal(true);
                         }}
-                        className="w-full py-2 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primaryColor)] text-[var(--textColor3)] hover:bg-[var(--primary1)]"
+                        className="w-full min-h-[44px] py-3 px-4 rounded-lg shadow-lg transition duration-200 bg-[var(--primaryColor)] text-[var(--textColor3)] hover:bg-[var(--primary1)] font-medium"
                       >
                         Contact Owner Securely
                       </button>
                     </div>
-                  ) : (
-                    <></>
                   )}
-
-
                 </div>
               </div>
             </div>
@@ -682,6 +678,19 @@ export default function PetMapPage() {
             />
 
           )}
+
+          {/*
+            Mobile FAB - thumb-reachable shortcut to the report flow. Hidden
+            on md+ where the same action is in the top filter row.
+          */}
+          <Link
+            href="/pet/report"
+            className="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-4 rounded-full bg-[var(--primaryColor)] text-[var(--textColor3)] font-semibold shadow-2xl hover:bg-[var(--primary1)] active:scale-95 transition"
+            aria-label="Report a pet sighting"
+          >
+            <span className="text-xl leading-none">+</span>
+            <span>Report</span>
+          </Link>
 
         </main>
         <Footer />

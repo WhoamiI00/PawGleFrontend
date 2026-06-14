@@ -282,3 +282,36 @@ body {
   font-weight: 900;
   transform: scale(1.1);
 }
+
+/* Bottom-sheet entrance for mobile modals (map pet detail, etc.) */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0.4; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Skeleton loader pulse used while embeddings or remote data are loading.
+   Implemented as a transform-animated overlay (composite-only) instead of
+   animating background-position (which forces a repaint each frame). */
+.skeleton {
+  position: relative;
+  background-color: var(--background2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--c3) 50%,
+    transparent 100%
+  );
+  animation: skeletonSweep 1.4s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes skeletonSweep {
+  100% { transform: translateX(100%); }
+}
