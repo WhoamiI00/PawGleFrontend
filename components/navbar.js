@@ -355,6 +355,14 @@ export default function Navbar() {
                       </Link>
                     </li>
                   )}
+                  {isLoggedIn && (
+                    <li className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2">
+                      <FaBell />
+                      <Link href="/alerts">
+                        <span>Nearby alerts</span>
+                      </Link>
+                    </li>
+                  )}
                   {isLoggedIn ? (
                     <li
                       className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2 cursor-pointer"
