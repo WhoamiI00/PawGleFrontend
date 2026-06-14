@@ -23,6 +23,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const BACKEND_API_PORT = process.env.NEXT_PUBLIC_BACKEND_API_PORT;
 
   // Silently mint an access token from the httpOnly refresh cookie if present.
@@ -48,6 +49,24 @@ export default function Navbar() {
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
+    }
+  }, [BACKEND_API_PORT]);
+
+  const fetchChatUnread = useCallback(async () => {
+    const token = getAccessToken();
+    if (!token) return;
+    try {
+      const response = await fetch(`${BACKEND_API_PORT}/api/auth/chat/conversations/`, {
+        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const total = (data || []).reduce((sum, c) => sum + (c.unread_count || 0), 0);
+        setChatUnreadCount(total);
+      }
+    } catch (error) {
+      // Silent: not critical, will retry on next poll.
     }
   }, [BACKEND_API_PORT]);
 
@@ -105,17 +124,22 @@ export default function Navbar() {
   useEffect(() => {
     (async () => {
       const ok = await restoreSession();
-      if (ok) fetchNotifications();
+      if (ok) {
+        fetchNotifications();
+        fetchChatUnread();
+      }
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Poll notifications every 30 seconds
+  // Poll notifications + chat unread every 30 seconds
   useEffect(() => {
-    if (isLoggedIn) {
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [isLoggedIn, fetchNotifications]);
+    if (!isLoggedIn) return undefined;
+    const interval = setInterval(() => {
+      fetchNotifications();
+      fetchChatUnread();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [isLoggedIn, fetchNotifications, fetchChatUnread]);
 
   const toggleDropdown = (event) => {
     event.stopPropagation();
@@ -162,6 +186,7 @@ export default function Navbar() {
     setIsLoggedIn(false);
     setNotifications([]);
     setUnreadCount(0);
+    setChatUnreadCount(0);
   };
 
   const timeAgo = (dateString) => {
@@ -320,8 +345,13 @@ export default function Navbar() {
                   {isLoggedIn && (
                     <li className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2">
                       <FaCommentDots />
-                      <Link href="/chat">
+                      <Link href="/chat" className="flex items-center space-x-2">
                         <span>Messages</span>
+                        {chatUnreadCount > 0 && (
+                          <span className="text-xs bg-[var(--primaryColor)] text-white font-bold rounded-full px-2 py-0.5">
+                            {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
+                          </span>
+                        )}
                       </Link>
                     </li>
                   )}

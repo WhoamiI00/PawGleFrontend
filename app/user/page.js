@@ -83,6 +83,28 @@ const User = () => {
     window.location.href = "/user/edit";
   };
 
+  const downloadTag = async (petId, petName) => {
+    try {
+      await bootstrapAccessToken();
+      const res = await fetch(`${BACKEND_API_PORT}/api/auth/pets/${petId}/qr/`, {
+        credentials: "include",
+        headers: { Authorization: `Bearer ${getAccessToken()}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch tag");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pawgle-${(petName || "pet").replace(/\s+/g, "-")}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError("Couldn't download tag. Please try again.");
+    }
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -196,6 +218,13 @@ const User = () => {
                           className="py-2 px-4 rounded-lg shadow-lg transition duration-200 hover:scale-105 hover:bg-[var(--c4)] hover:text-[var(--textColor)] bg-[var(--c2)] text-[var(--textColor3)]"
                         >
                           Report
+                        </button>
+                        <button
+                          onClick={() => downloadTag(pet.id, pet.name)}
+                          className="py-2 px-4 rounded-lg shadow-lg transition duration-200 hover:scale-105 hover:bg-[var(--c4)] hover:text-[var(--textColor)] bg-[var(--c2)] text-[var(--textColor3)]"
+                          title="Download a printable QR tag - anyone who scans it lands on a 'I found this pet' page"
+                        >
+                          Tag
                         </button>
                       </div>
                     </li>
