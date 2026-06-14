@@ -10,4 +10,22 @@ const nextConfig = {
     ],
   },
 };
-export default nextConfig;
+
+// Wrap with Sentry only when an auth token is present (build-time source-map
+// upload). Locally and on platforms without it, fall through to the plain
+// config so dev/build still work.
+let exported = nextConfig;
+if (process.env.SENTRY_AUTH_TOKEN) {
+  // Dynamic require so we don't crash if @sentry/nextjs isn't installed yet.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { withSentryConfig } = await import("@sentry/nextjs");
+  exported = withSentryConfig(nextConfig, {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    silent: !process.env.CI,
+    widenClientFileUpload: true,
+    disableLogger: true,
+  });
+}
+
+export default exported;

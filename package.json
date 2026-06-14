@@ -12,6 +12,7 @@
     "@imgly/background-removal": "^1.6.0",
     "@radix-ui/react-slot": "^1.1.1",
     "@react-google-maps/api": "^2.20.6",
+    "@sentry/nextjs": "^10.57.0",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "class-variance-authority": "^0.7.1",
