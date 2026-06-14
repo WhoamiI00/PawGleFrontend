@@ -291,7 +291,7 @@ const LoginSignup = () => {
             onLoad={initializeGoogleButton}
           />
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 space-y-2">
             <p className="text-sm text-[var(--textColor2)]">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}
               <button
@@ -301,6 +301,17 @@ const LoginSignup = () => {
                 {isSignUp ? "Log In" : "Sign Up"}
               </button>
             </p>
+            {!isSignUp && (
+              <p className="text-sm text-[var(--textColor2)]">
+                Or{" "}
+                <a
+                  href="/auth/magic"
+                  className="text-[var(--primaryColor)] hover:underline font-semibold"
+                >
+                  email me a sign-in link
+                </a>
+              </p>
+            )}
           </div>
         </motion.div>
       </div>
