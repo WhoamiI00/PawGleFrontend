@@ -256,8 +256,39 @@ const User = () => {
                   ))}
                 </ul>
               ) : (
-                <div>
-                  <p>No Pets Registered</p>
+                <div className="rounded-xl p-6 bg-[var(--background2)] space-y-5">
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">Welcome to PawGle!</h3>
+                    <p className="text-[var(--textColor2)] text-sm">
+                      Three quick steps to keep your pet safe.
+                    </p>
+                  </div>
+                  <ol className="space-y-3">
+                    <OnboardingStep
+                      n={1}
+                      title="Add your pet"
+                      body="A few photos let us recognize your pet if someone finds them."
+                      cta="Add Pet"
+                      href="/user/update"
+                      done={false}
+                    />
+                    <OnboardingStep
+                      n={2}
+                      title="Print a QR tag"
+                      body="Pop one on the collar. Anyone who scans it lands on a 'I found this pet' page."
+                      cta="See how"
+                      href="/user/update"
+                      done={false}
+                    />
+                    <OnboardingStep
+                      n={3}
+                      title="Set a nearby alert"
+                      body="Get pinged when a lost or found pet is reported close to you."
+                      cta="Set up alerts"
+                      href="/alerts"
+                      done={false}
+                    />
+                  </ol>
                 </div>
               )}
             </div>
@@ -303,5 +334,32 @@ const User = () => {
     </>
   );
 };
+
+function OnboardingStep({ n, title, body, cta, href, done }) {
+  return (
+    <li className="flex items-start gap-3">
+      <span
+        className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
+          done
+            ? "bg-green-500 text-white"
+            : "bg-[var(--primaryColor)] text-white"
+        }`}
+        aria-hidden="true"
+      >
+        {done ? "✓" : n}
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-[var(--textColor)]">{title}</p>
+        <p className="text-sm text-[var(--textColor2)]">{body}</p>
+      </div>
+      <Link
+        href={href}
+        className="self-center text-sm font-semibold text-[var(--primaryColor)] hover:underline whitespace-nowrap"
+      >
+        {cta} →
+      </Link>
+    </li>
+  );
+}
 
 export default User;
