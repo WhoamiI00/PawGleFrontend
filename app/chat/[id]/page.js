@@ -9,6 +9,7 @@ import Link from "next/link";
 import Navbar from "@/components/navbar";
 import api from "../../api/api";
 import { bootstrapAccessToken, isAuthenticated, getCurrentUserId } from "../../api/auth";
+import TestBadge from "@/components/TestBadge";
 
 const POLL_MS = 5000;
 
@@ -167,6 +168,7 @@ export default function ChatThread() {
                   />
                 )}
                 <h1 className="text-lg font-semibold truncate">{meta.pet_name}</h1>
+                <TestBadge show={meta.is_test} />
               </div>
             )}
           </div>

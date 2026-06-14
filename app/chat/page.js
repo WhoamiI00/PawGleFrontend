@@ -6,6 +6,7 @@ import Navbar from "@/components/navbar";
 import api from "../api/api";
 import { bootstrapAccessToken, isAuthenticated } from "../api/auth";
 import { useRouter } from "next/navigation";
+import TestBadge from "@/components/TestBadge";
 
 function timeAgo(iso) {
   if (!iso) return "";
@@ -102,7 +103,10 @@ export default function ConversationsList() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-baseline gap-2">
-                      <span className="font-semibold truncate">{c.pet_name}</span>
+                      <span className="font-semibold truncate flex items-center gap-2">
+                        <span className="truncate">{c.pet_name}</span>
+                        <TestBadge show={c.is_test} />
+                      </span>
                       <span className="text-xs text-[var(--textColor2)] flex-shrink-0">
                         {timeAgo(c.last_message_at || c.created_at)}
                       </span>

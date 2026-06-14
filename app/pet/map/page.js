@@ -7,6 +7,7 @@ import Map from "@/components/Map";
 import Link from "next/link";
 import Image from "next/image"
 import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
+import TestBadge from "@/components/TestBadge";
 
 export default function PetMapPage() {
   const [pets, setPets] = useState([]);
@@ -570,7 +571,10 @@ export default function PetMapPage() {
                           </div>
                         )}
                         <div className="flex-grow">
-                          <div className="font-semibold">{pet.animal_name}</div>
+                          <div className="font-semibold flex items-center gap-2">
+                            <span>{pet.animal_name}</span>
+                            <TestBadge show={pet.is_test} />
+                          </div>
                           <div>{pet.type} {pet.breed}</div>
                           <div className={`font-medium ${pet.status === 'lost' ? 'text-red-400' :
                             pet.status === 'found' ? 'text-green-400' : 'text-gray-400'
@@ -616,7 +620,10 @@ export default function PetMapPage() {
                 </div>
 
                 <div className="flex justify-between mb-4">
-                  <h3 className="text-xl font-bold text-[var(--textColor)]">{selectedPet.animal_name}</h3>
+                  <h3 className="text-xl font-bold text-[var(--textColor)] flex items-center gap-2">
+                    <span>{selectedPet.animal_name}</span>
+                    <TestBadge show={selectedPet.is_test} />
+                  </h3>
                   <button
                     onClick={() => setSelectedPet(null)}
                     className="text-[var(--textColor2)] hover:text-[var(--textColor)] w-10 h-10 flex items-center justify-center rounded-full"
@@ -625,6 +632,11 @@ export default function PetMapPage() {
                     ✕
                   </button>
                 </div>
+                {selectedPet.is_test && (
+                  <p className="text-xs text-[var(--textColor2)] -mt-2 mb-3">
+                    This is seeded test data, not a real lost/found pet report.
+                  </p>
+                )}
 
                 {selectedPet.image_url && (
                   <div className="mb-4">
