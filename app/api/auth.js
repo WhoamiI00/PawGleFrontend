@@ -44,6 +44,25 @@ export function isAuthenticated() {
 }
 
 /**
+ * Decode the user_id from the current access token (Simple JWT puts it in
+ * the `user_id` claim). Returns null if there is no token or it can't be
+ * decoded. Caller is responsible for calling bootstrapAccessToken() first
+ * if a session-restore is needed.
+ */
+export function getCurrentUserId() {
+  if (!accessToken) return null;
+  try {
+    const payload = JSON.parse(
+      atob(accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    const id = payload?.user_id;
+    return id != null ? Number(id) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Try to mint a fresh access token from the httpOnly refresh cookie.
  * Returns the access token on success, null on failure (i.e. logged out).
  * Safe to call multiple times concurrently - dedupes in-flight calls.

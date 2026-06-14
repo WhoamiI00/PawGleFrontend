@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { FaUser, FaMoon, FaSun, FaBell } from "react-icons/fa";
+import { FaUser, FaMoon, FaSun, FaBell, FaCommentDots } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdDashboard } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
@@ -317,6 +317,14 @@ export default function Navbar() {
                       <span>Report</span>
                     </Link>
                   </li>
+                  {isLoggedIn && (
+                    <li className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2">
+                      <FaCommentDots />
+                      <Link href="/chat">
+                        <span>Messages</span>
+                      </Link>
+                    </li>
+                  )}
                   {isLoggedIn ? (
                     <li
                       className="px-4 py-2 hover:bg-[var(--backgroundColor)] flex items-center space-x-2 cursor-pointer"
