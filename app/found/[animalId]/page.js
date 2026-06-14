@@ -1,5 +1,8 @@
 "use client";
 
+// Cloudflare Pages requires dynamic Next.js routes to opt into the edge runtime.
+export const runtime = "edge";
+
 /**
  * Public landing page for QR-tag scans.
  *

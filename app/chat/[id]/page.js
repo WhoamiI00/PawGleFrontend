@@ -1,5 +1,8 @@
 "use client";
 
+// Cloudflare Pages requires dynamic Next.js routes to opt into the edge runtime.
+export const runtime = "edge";
+
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
