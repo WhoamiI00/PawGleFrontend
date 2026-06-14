@@ -8,6 +8,7 @@ import Image from "next/image";
 import { IoShareSharp } from "react-icons/io5";
 import Link from "next/link";
 import { bootstrapAccessToken, getAccessToken } from "../../api/auth";
+import ImageDropzone from "@/components/ImageDropzone";
 
 export default function SearchPetForm() {
   const [files, setFiles] = useState([]);
@@ -111,33 +112,14 @@ export default function SearchPetForm() {
                 className="space-y-6"
                 onSubmit={handleSubmit}
               >
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="image"
-                      className="block text-sm font-semibold text-[var(--textColor2)] mb-1"
-                    >
-                      Upload Photo
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="file"
-                        id="image"
-                        name="image"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="image"
-                        className="flex items-center justify-center px-4 py-2 bg-[var(--primaryColor)] text-[var(--textColor3)] font-bold rounded-lg cursor-pointer hover:bg-[var(--primary1)] hover:text-[var(--textColor3)] hover:shadow-lg transition-all duration-300 ease-in-out"
-                      >
-                        {files.length > 0
-                          ? `${files.length} file(s) selected`
-                          : "Choose File"}
-                      </label>
-                    </div>
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-[var(--textColor2)] mb-2">
+                    Upload Photo
+                  </label>
+                  <ImageDropzone
+                    onChange={setFiles}
+                    label="Drop a pet photo, paste, or tap to choose"
+                  />
                 </div>
 
                 <div>
