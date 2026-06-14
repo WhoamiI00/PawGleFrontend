@@ -5,8 +5,9 @@ import {
   clearAccessToken,
 } from "./auth";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_API_PORT || "http://localhost:8000/";
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_BACKEND_API_PORT || "http://localhost:8000"
+).replace(/\/+$/, "") + "/";
 
 const api = axios.create({
   baseURL: BASE_URL,

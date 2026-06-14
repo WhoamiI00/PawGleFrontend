@@ -21,8 +21,11 @@ import axios from "axios";
 let accessToken = null;
 let bootstrapPromise = null;
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_API_PORT || "http://localhost:8000/";
+// Normalize so callers can safely concat `${BASE_URL}api/...` regardless of
+// whether the env var has a trailing slash.
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_BACKEND_API_PORT || "http://localhost:8000"
+).replace(/\/+$/, "") + "/";
 
 export function getAccessToken() {
   return accessToken;
