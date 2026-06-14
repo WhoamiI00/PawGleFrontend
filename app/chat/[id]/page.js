@@ -175,7 +175,24 @@ export default function ChatThread() {
             className="flex-1 overflow-y-auto py-4 space-y-3"
           >
             {loading && (
-              <p className="text-[var(--textColor2)] text-center">Loading messages...</p>
+              <div className="space-y-3" aria-busy="true" aria-label="Loading messages">
+                {[
+                  { mine: false, w: "60%" },
+                  { mine: true, w: "45%" },
+                  { mine: false, w: "70%" },
+                  { mine: true, w: "30%" },
+                ].map((row, i) => (
+                  <div
+                    key={i}
+                    className={`flex ${row.mine ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className="skeleton h-12 rounded-2xl"
+                      style={{ width: row.w }}
+                    />
+                  </div>
+                ))}
+              </div>
             )}
             {!loading && messages.length === 0 && (
               <p className="text-[var(--textColor2)] text-center">

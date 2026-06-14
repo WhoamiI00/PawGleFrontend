@@ -107,8 +107,33 @@ const User = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
+      <div className="min-h-screen bg-[var(--background)] pt-24 px-4" aria-busy="true" aria-label="Loading profile">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Profile header skeleton */}
+          <div className="flex items-center gap-4">
+            <div className="skeleton w-16 h-16 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <div className="skeleton h-5 w-1/3" />
+              <div className="skeleton h-4 w-1/2" />
+            </div>
+          </div>
+          {/* Pet list skeletons */}
+          <ul className="space-y-3">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <li
+                key={i}
+                className="flex gap-4 p-4 bg-[var(--background2)] rounded-lg"
+              >
+                <div className="skeleton w-32 h-32" />
+                <div className="flex-1 space-y-3">
+                  <div className="skeleton h-5 w-1/2" />
+                  <div className="skeleton h-4 w-2/3" />
+                  <div className="skeleton h-4 w-1/3" />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   if (error)

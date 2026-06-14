@@ -55,7 +55,20 @@ export default function ConversationsList() {
           <h1 className="text-3xl font-bold mb-6">Messages</h1>
 
           {loading && (
-            <p className="text-[var(--textColor2)]">Loading conversations...</p>
+            <ul className="space-y-2" aria-busy="true" aria-label="Loading conversations">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 p-3 bg-[var(--background2)] rounded-lg"
+                >
+                  <div className="skeleton w-12 h-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <div className="skeleton h-4 w-1/3" />
+                    <div className="skeleton h-3 w-2/3" />
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
           {error && (
             <p className="text-red-500">{error}</p>
